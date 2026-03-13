@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CommentRequest;
-use App\Http\Requests\UpdateComment;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Models\Post;
@@ -30,7 +29,7 @@ class CommentController extends Controller
         return CommentResource::make($comment->load('user'));
     }
 
-    public function update(UpdateComment $request, Post $post, Comment $comment): JsonResource
+    public function update(CommentRequest $request, Post $post, Comment $comment): JsonResource
     {
         $updated_data = $comment->update($request->validated());
 

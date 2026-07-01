@@ -9,8 +9,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', LoginController::class)->name('register');
-Route::post('/login', RegisterController::class)->name('login');
+Route::post('/register', RegisterController::class)->name('register');
+Route::post('/login', LoginController::class)->name('login');
 
 Route::middleware('auth:sanctum')->group(function () {
 

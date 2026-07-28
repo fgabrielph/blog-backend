@@ -13,7 +13,8 @@ class PostController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return PostResource::collection(auth()->user()->posts()->get());
+        // return PostResource::collection(auth()->user()->posts()->get());
+        return PostResource::collection(Post::with('user')->latest()->take(10)->get());
     }
 
     public function store(PostRequest $request): JsonResource
@@ -26,7 +27,7 @@ class PostController extends Controller
 
     public function show(Post $post): JsonResource
     {
-        return PostResource::make($post);
+        return PostResource::make($post->load('user'));
     }
 
     public function update(UpdateRequest $request, Post $post): JsonResource

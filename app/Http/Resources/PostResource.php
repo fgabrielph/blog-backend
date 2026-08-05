@@ -17,12 +17,15 @@ class PostResource extends JsonResource
         return [
             'id' => $this->id,
             'author_id' => $this->user_id,
+            'category_id' => $this->category_id,
             'title' => $this->title,
             'content' => $this->content,
             'is_published' => $this->is_published,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+
             'author' => UserResource::make($this->whenLoaded('user')),
+            // 'category' => CategoryResource::make($this->whenLoaded('category')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             // 'comments' => CommentResource::make($this->whereLoaded('comment'))
         ];

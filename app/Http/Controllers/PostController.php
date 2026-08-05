@@ -14,7 +14,8 @@ class PostController extends Controller
     public function index(): AnonymousResourceCollection
     {
         // return PostResource::collection(auth()->user()->posts()->get());
-        return PostResource::collection(Post::with('user')->latest()->take(10)->get());
+        // return PostResource::collection(Post::with('user')->latest()->take(10)->get());
+        return PostResource::collection(Post::with('user')->latest()->paginate(request('limit', 5)));
     }
 
     public function store(PostRequest $request): JsonResource

@@ -11,11 +11,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostController extends Controller
 {
+    public function publicFeed(): AnonymousResourceCollection
+    {
+        return PostResource::collection(Post::with('user')->where('is_published', true)->latest()->paginate(request('limit', 5)));
+    }
+    
     public function index(): AnonymousResourceCollection
     {
-        // return PostResource::collection(auth()->user()->posts()->get());
-        // return PostResource::collection(Post::with('user')->latest()->take(10)->get());
-        return PostResource::collection(Post::with('user')->latest()->paginate(request('limit', 5)));
+        return PostResource::collection(auth()->user()->posts()->with('user')->latest()->paginate(request('limit', 5)));
     }
 
     public function store(PostRequest $request): JsonResource
@@ -33,9 +36,9 @@ class PostController extends Controller
 
     public function update(UpdateRequest $request, Post $post): JsonResource
     {
-        $updated_data = $post->update($request->validated());
+        $post->update($request->validated());
 
-        return PostResource::make($updated_data);
+        return PostResource::make($post);
     }
 
     public function destroy(Post $post): string

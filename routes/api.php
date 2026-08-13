@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', RegisterController::class)->middleware('throttle:5,1')->name('register');
 Route::post('/login', LoginController::class)->name('login');
-Route::get('/blog', [PostController::class, 'index'])->name('posts.index');
-Route::get('/blog/{post}', [PostController::class, 'show'])->name('posts.show');
+Route::get('/blog', [PostController::class, 'publicFeed'])->name('blog.index');
+Route::get('/blog/{post}', [PostController::class, 'show'])->name('blog.show');
 Route::get('/categories', [CategoriesController::class, 'index'])->name('categories.index');
 Route::get('/categories/{category}', [CategoriesController::class, 'show'])->name('categories.show');
 
@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('profile', ProfileController::class)->name('profile');
     Route::post('logout', LogoutController::class)->name('logout');
 
-    Route::apiResource('/posts', PostController::class)->names('posts')->except(['index', 'show']);
+    Route::apiResource('/posts', PostController::class)->names('posts');
     Route::apiResource('/categories', CategoriesController::class)->names('categories')->except(['index', 'show']);
     Route::apiResource('/posts/{post}/comments', CommentController::class)->names('comments');
 });

@@ -17,8 +17,14 @@ class CategoriesController extends Controller
         $query = Category::query();
 
         if ($request->boolean('has_posts')) {
-            $query->has('posts');
+            $query->whereHas('posts', function ($q) {
+                $q->where('is_published', true);
+            });
         }
+
+        $query->withCount(['posts' => function ($q) {
+            $q->where('is_published', true);
+        }]);
 
         $categories = $query->latest()->take(10)->get();
 
@@ -35,7 +41,9 @@ class CategoriesController extends Controller
 
     public function show(Category $category): AnonymousResourceCollection
     {
-        return PostResource::collection($category->posts()->with('user')->latest()->paginate(10));
+        return PostResource::collection(
+            $category->posts()->with(['user', 'category'])->where('is_published', true)->latest()->paginate(10)
+        );
     }
 
     public function update(Request $request, string $id)

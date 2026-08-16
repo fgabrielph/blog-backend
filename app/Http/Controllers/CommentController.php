@@ -13,7 +13,7 @@ class CommentController extends Controller
 {
     public function index(Post $post): AnonymousResourceCollection
     {
-        return CommentResource::collection($post->comments()->with('user')->get());
+        return CommentResource::collection($post->comments()->with('user')->latest()->paginate(request('limit', 5)));
     }
 
     public function store(CommentRequest $request, Post $post): JsonResource

@@ -13,7 +13,7 @@ class PostController extends Controller
 {
     public function publicFeed(): AnonymousResourceCollection
     {
-        return PostResource::collection(Post::with('user')->where('is_published', true)->latest()->paginate(request('limit', 5)));
+        return PostResource::collection(Post::with(['user', 'category'])->where('is_published', true)->latest()->paginate(request('limit', 5)));
     }
     
     public function index(): AnonymousResourceCollection
@@ -31,7 +31,7 @@ class PostController extends Controller
 
     public function show(Post $post): JsonResource
     {
-        return PostResource::make($post->load('user'));
+        return PostResource::make($post->load(['user', 'category']));
     }
 
     public function update(UpdateRequest $request, Post $post): JsonResource

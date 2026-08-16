@@ -25,7 +25,7 @@ class PostResource extends JsonResource
             'updated_at' => $this->updated_at,
 
             'author' => UserResource::make($this->whenLoaded('user')),
-            // 'category' => CategoryResource::make($this->whenLoaded('category')),
+            'category' => CategoryResource::make($this->whenLoaded('category')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             // 'comments' => CommentResource::make($this->whereLoaded('comment'))
         ];

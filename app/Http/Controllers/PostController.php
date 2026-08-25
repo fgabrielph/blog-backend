@@ -31,11 +31,15 @@ class PostController extends Controller
 
     public function show(Post $post): JsonResource
     {
+        abort_unless($post->is_published || auth('sanctum')->id() === $post->user_id, 404);
+
         return PostResource::make($post->load(['user', 'category']));
     }
 
     public function update(UpdateRequest $request, Post $post): JsonResource
     {
+        abort_unless(auth()->id() === $post->user_id, 403);
+
         $post->update($request->validated());
 
         return PostResource::make($post);
@@ -43,6 +47,8 @@ class PostController extends Controller
 
     public function destroy(Post $post): string
     {
+        abort_unless(auth()->id() === $post->user_id, 403);
+
         $post->delete();
 
         return 'Post Deleted';

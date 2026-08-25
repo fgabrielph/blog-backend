@@ -11,7 +11,7 @@ use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', RegisterController::class)->middleware('throttle:5,1')->name('register');
-Route::post('/login', LoginController::class)->name('login');
+Route::post('/login', LoginController::class)->middleware('throttle:5,1')->name('login');
 Route::get('/blog', [PostController::class, 'publicFeed'])->name('blog.index');
 Route::get('/blog/{post}', [PostController::class, 'show'])->name('blog.show');
 Route::get('/categories', [CategoriesController::class, 'index'])->name('categories.index');
@@ -27,9 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('/posts', PostController::class)->names('posts');
     Route::apiResource('/categories', CategoriesController::class)->names('categories')->except(['index', 'show']);
-    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
-    Route::put('/posts/{post}/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
-    Route::delete('/posts/{post}/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->middleware('throttle:10,1')->name('comments.store');
+    Route::put('/posts/{post}/comments/{comment}', [CommentController::class, 'update'])->middleware('throttle:30,1')->name('comments.update');
+    Route::delete('/posts/{post}/comments/{comment}', [CommentController::class, 'destroy'])->middleware('throttle:30,1')->name('comments.destroy');
 });
 
 Route::get('/sample', function () {

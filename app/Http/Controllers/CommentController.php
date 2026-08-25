@@ -13,7 +13,29 @@ class CommentController extends Controller
 {
     public function index(Post $post): AnonymousResourceCollection
     {
-        return CommentResource::collection($post->comments()->with('user')->latest()->paginate(request('limit', 5)));
+        $limit = request('limit', 5);
+        $query = $post->comments()->with('user')->latest('id');
+
+        $commentId = request('comment_id');
+        $targetPage = null;
+
+        if ($commentId) {
+            $position = (clone $query)->pluck('id')->values()->search((int) $commentId);
+
+            if ($position !== false) {
+                $targetPage = (int) ceil(($position + 1) / $limit);
+            }
+        }
+
+        $paginator = $query->paginate($limit);
+
+        $response = CommentResource::collection($paginator);
+
+        if ($targetPage !== null) {
+            $response->additional(['target_comment_page' => $targetPage]);
+        }
+
+        return $response;
     }
 
     public function store(CommentRequest $request, Post $post): JsonResource
@@ -31,6 +53,8 @@ class CommentController extends Controller
 
     public function update(CommentRequest $request, Post $post, Comment $comment): JsonResource
     {
+        abort_unless(auth()->id() === $comment->user_id, 403);
+
         $updated_data = $comment->update($request->validated());
 
         return CommentResource::make($updated_data);
@@ -38,6 +62,8 @@ class CommentController extends Controller
 
     public function destroy(Post $post, Comment $comment): string
     {
+        abort_unless(auth()->id() === $comment->user_id, 403);
+
         $comment->delete();
 
         return 'Comment Deleted';
